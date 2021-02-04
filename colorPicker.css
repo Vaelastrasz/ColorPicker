@@ -1,0 +1,38 @@
+.colorBlock {
+  color: red;
+  text-align:center;
+  vertical-align: middle;
+  border-radius: 10%;
+  margin: 10dip;
+  border: 5dip solid black;
+}
+.previewColor {
+  width: *;
+  height: width(56.25%);
+  background-color: black;
+  prototype: PreviewColor;
+}
+.colorBlock:hover {
+  border: 5dip solid limegreen;
+}
+.colorsPaliter {
+  
+}
+.colorControl {
+  width: *;
+  height: width(55.5%); 
+  background-color: purple;
+  prototype: ColorPicker;
+  color: white;
+}
+row {
+  width: *;
+  horizontal-align: middle;
+  vertical-align: middle;
+}
+div.previewColor > p {
+  font-size: 6vh;
+}
+div.colorControl > p {
+  font-size: 3vh;
+}

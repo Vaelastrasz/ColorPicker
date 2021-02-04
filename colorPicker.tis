@@ -1,0 +1,11 @@
+  
+class ColorPicker: Element
+{
+  function attached() {
+    /*init*/
+  }
+  function onMouse(evt) {
+    /*some event handling*/
+  }
+
+}
