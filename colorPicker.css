@@ -1,3 +1,42 @@
+widget[type=hsv] {
+  var(hue): #ff0000;
+  prototype: HSVSelector url(HSVSelector.tis);
+  display:none;
+  size:max-content;
+}
+
+widget[type=hsv] > input.hue
+{
+  display:block; 
+  border:none;
+  height: 3dip;
+  width:182dip;
+  margin:0 *;
+  background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+}
+
+widget[type=hsv] > div.layers { 
+  size:180dip;
+  flow:stack;
+  margin:*;
+}
+
+widget[type=hsv] > div.layers > div.value {
+  size:*;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.0) 1%, rgba(0,0,0,1.0) 100%); 
+}
+widget[type=hsv] > div.layers > div.saturation {
+  size:*;
+  background: linear-gradient(to right, color(hue) 0%, #ffffff 100%); 
+}
+
+widget[type=hsv] > div.layers > div.pointer {
+  border:2dip solid #fff;
+  size:7dip;
+  transform: translate(-50%,-50%);
+  border-radius:50%;
+}
+
 .colorBlock {
   color: red;
   text-align:center;
@@ -16,11 +55,14 @@
   border: 5dip solid limegreen;
 }
 .colorsPaliter {
-  
+  //flow: grid(1 2 3 4,
+  //           5 6 7 8,
+  //           9 10 11 12);
+  flow: horizontal-wrap;
 }
 .colorControl {
   width: *;
-  height: width(55.5%); 
+  height: width(56.25%); 
   background-color: purple;
   prototype: ColorPicker;
   color: white;

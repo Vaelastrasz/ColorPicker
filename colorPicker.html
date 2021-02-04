@@ -7,7 +7,18 @@
   <div class="colorBlock previewColor">
     <p>Preview</p>
   </div>
-  <row>
+  <div class="colorsPaliter">
+    <widget|hsv #color>
+      <div.layers>
+        <div.saturation/>
+        <div.value/>          
+        <div.pointer/>
+      </div>
+      <input|hslider.hue min=0 max=360 />
+    </widget>
+    <div class="colorBlock colorControl">
+      <p>-</p>
+    </div>
     <div class="colorBlock colorControl">
       <p>1</p>
     </div>
@@ -20,6 +31,6 @@
     <div class="colorBlock colorControl">
       <p>+</p>
     </div>
-  </row>
+  </div>
 </body> 
 </html>
