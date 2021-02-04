@@ -1,11 +1,39 @@
-  
-class ColorPicker: Element
-{
-  function attached() {
-    /*init*/
+namespace colorPickerFeature {
+
+  //states, maybe wrap to class?
+  var currentColor = "#000000";
+  var colorBlocks = [];
+
+  function setCurrentColor(color) {
+    currentColor = color;
   }
-  function onMouse(evt) {
-    /*some event handling*/
+  //
+
+  class ColorPicker: Element {
+
+    function attached() {}
+    function onMouse(evt) {}
+
   }
 
+  class PreviewColor: Element {
+    const preview = $(.previewColor) 
+    function attached() {
+      preview.style#background-color = currentColor;
+      preview.value = "";
+      //TODO: think about saving to JSON and serialize it to file
+    }
+  }
+
+  class ColorsPaliter: Element {
+
+    const maxElementWidth = 700;
+    const paliter = $(.colorsPaliter);
+    function attached() {
+      stdout.println("ColorsPaliter Attached");
+      view.on("size", function() {
+        paliter.attributes["type"]  = (paliter.box(#width) < maxElementWidth ? "mesh" : "row");
+      });
+    }
+  }
 }

@@ -25,6 +25,7 @@ widget[type=hsv] > div.layers > div.value {
   size:*;
   background: linear-gradient(to bottom, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.0) 1%, rgba(0,0,0,1.0) 100%); 
 }
+
 widget[type=hsv] > div.layers > div.saturation {
   size:*;
   background: linear-gradient(to right, color(hue) 0%, #ffffff 100%); 
@@ -39,42 +40,59 @@ widget[type=hsv] > div.layers > div.pointer {
 
 .colorBlock {
   color: red;
-  text-align:center;
+  text-align: center;
   vertical-align: middle;
   border-radius: 10%;
   margin: 10dip;
   border: 5dip solid black;
 }
+
 .previewColor {
   width: *;
   height: width(56.25%);
   background-color: black;
-  prototype: PreviewColor;
+  prototype: colorPickerFeature.PreviewColor url(colorPicker.tis);
 }
+
+.selectColorPopup {
+  display: none;
+}
+
 .colorBlock:hover {
   border: 5dip solid limegreen;
 }
 .colorsPaliter {
-  //flow: grid(1 2 3 4,
-  //           5 6 7 8,
-  //           9 10 11 12);
+  prototype: colorPickerFeature.ColorsPaliter url(colorPicker.tis);
+}
+
+.colorsPaliter[type="row"]{
   flow: horizontal-wrap;
 }
+
+.colorsPaliter[type="mesh"]{
+  flow: grid( 1 2 3 4,
+              5 6 7 8,
+              9 10 11 12);
+}
+
 .colorControl {
   width: *;
   height: width(56.25%); 
   background-color: purple;
-  prototype: ColorPicker;
+  prototype: colorPickerFeature.ColorPicker url(colorPicker.tis);
   color: white;
 }
+
 row {
   width: *;
   horizontal-align: middle;
   vertical-align: middle;
 }
+
 div.previewColor > p {
   font-size: 6vh;
 }
+
 div.colorControl > p {
   font-size: 3vh;
 }

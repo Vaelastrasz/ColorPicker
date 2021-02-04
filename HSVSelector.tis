@@ -5,6 +5,7 @@ this var val = 0.0; // 0..1.0
 this var sat = 0.0; // 0..1.0
 
 function attached() {
+    stdout.println("ATTACHED HSV");
     var me = this;
     $(div.value) << event mousedown(evt) {
         var (w,h) = this.box(#dimension);
