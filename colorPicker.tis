@@ -12,10 +12,14 @@ namespace colorPickerFeature {
   //
 
   class ColorPicker: Element {
-
-    function attached() {}
+    function attached() {
+      this.onClick = onClick;
+    }
+    function onClick() {
+      $(.colorControl).popup($(.selectColorPopup), 2); //how to get self? especially
+                                                       //if there are many ctrls!
+    }
     function detached(){}
-    function handleClick(){}
     function onMouse(evt) {}
 
   }
@@ -43,7 +47,7 @@ namespace colorPickerFeature {
       this.onClick = onClick;
     }
     function onClick() {
-      $(.selectColor).popup($(.selectColorPopup));
+      $(.selectColor).popup($(.selectColorPopup), 2);
     }
   }
 
