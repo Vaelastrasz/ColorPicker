@@ -86,12 +86,16 @@ widget[type=hsv] > div.layers > div.pointer {
   color: white;
 }
 
-hiddenLayer {
-  display: none;
+.selectColor {
+  prototype: colorPickerFeature.SelectColor url(colorPicker.tis);
+  background-color: black;
+  width: *;
+  height: width(56.25%);
+  color: white;
 }
 
-div.removeColor > p {
-  font-size: 2vh;
+hiddenLayer {
+  display: none;
 }
 
 row {
@@ -105,5 +109,13 @@ div.previewColor > p {
 }
 
 div.colorControl > p {
+  font-size: 2vh;
+}
+
+div.removeColor > p {
+  font-size: 2vh;
+}
+
+div.selectColor > p {
   font-size: 2vh;
 }

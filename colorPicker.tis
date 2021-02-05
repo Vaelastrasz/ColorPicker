@@ -13,15 +13,9 @@ namespace colorPickerFeature {
 
   class ColorPicker: Element {
 
-    function attached() {
-      this.onClick = handleClick;
-    }
-
+    function attached() {}
     function detached(){}
-
-	function handleClick(){
-		$(.colorControl).popup($(.selectColorPopup));
-	}
+    function handleClick(){}
     function onMouse(evt) {}
 
   }
@@ -31,7 +25,6 @@ namespace colorPickerFeature {
       // preview.style#background-color = currentColor;
       // preview.value = "";
       //TODO: think about saving to JSON and serialize it to file
-      view.on("color")
     }
   }
 
@@ -42,6 +35,15 @@ namespace colorPickerFeature {
     function onClick() {
       preview.style#background-color = "#000000"
       currentColor = "#000000";
+    }
+  }
+
+  class SelectColor: Element {
+    function attached() {
+      this.onClick = onClick;
+    }
+    function onClick() {
+      $(.selectColor).popup($(.selectColorPopup));
     }
   }
 
