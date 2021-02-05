@@ -1,7 +1,6 @@
 widget[type=hsv] {
   var(hue): #ff0000;
   prototype: HSVSelector url(HSVSelector.tis);
-  display:none;
   size:max-content;
 }
 
@@ -54,10 +53,6 @@ widget[type=hsv] > div.layers > div.pointer {
   prototype: colorPickerFeature.PreviewColor url(colorPicker.tis);
 }
 
-.selectColorPopup {
-  display: none;
-}
-
 .colorBlock:hover {
   border: 5dip solid limegreen;
 }
@@ -83,6 +78,22 @@ widget[type=hsv] > div.layers > div.pointer {
   color: white;
 }
 
+.removeColor {
+  prototype: colorPickerFeature.RemoveColor url(colorPicker.tis);
+  background-color: black;
+  width: *;
+  height: width(56.25%);
+  color: white;
+}
+
+hiddenLayer {
+  display: none;
+}
+
+div.removeColor > p {
+  font-size: 2vh;
+}
+
 row {
   width: *;
   horizontal-align: middle;
@@ -94,5 +105,5 @@ div.previewColor > p {
 }
 
 div.colorControl > p {
-  font-size: 3vh;
+  font-size: 2vh;
 }
