@@ -34,6 +34,6 @@ property value(v) {
 }
 }
 
-event change $(widget#color) {
-$(pre#out).text = this.value.toString();
-}
+// event change $(widget#color) {
+// $(pre#out).text = this.value.toString();
+// }

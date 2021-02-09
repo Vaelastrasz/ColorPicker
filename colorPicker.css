@@ -9,7 +9,7 @@ widget[type=hsv] > input.hue
   display:block; 
   border:none;
   height: 3dip;
-  width:182dip;
+  width:170dip;
   margin:0 *;
   background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
 }
@@ -54,7 +54,7 @@ widget[type=hsv] > div.layers > div.pointer {
 }
 
 .colorBlock:hover {
-  border: 5dip solid limegreen;
+  border: 5dip solid grey;
 }
 .colorsPaliter {
   prototype: colorPickerFeature.ColorsPaliter url(colorPicker.tis);
@@ -62,6 +62,14 @@ widget[type=hsv] > div.layers > div.pointer {
 
 .colorsPaliter[type="row"]{
   flow: horizontal-wrap;
+}
+
+.colorsPaliter[type="row"] > div{
+  width: 180dip;
+}
+
+.colorsPaliter[type="mesh"] > div {
+  width: *;
 }
 
 .colorsPaliter[type="mesh"]{
@@ -78,8 +86,8 @@ widget[type=hsv] > div.layers > div.pointer {
   color: white;
 }
 
-.removeColor {
-  prototype: colorPickerFeature.RemoveColor url(colorPicker.tis);
+.resetColor {
+  prototype: colorPickerFeature.ResetColor url(colorPicker.tis);
   background-color: black;
   width: *;
   height: width(56.25%);
@@ -88,21 +96,60 @@ widget[type=hsv] > div.layers > div.pointer {
 
 .selectColor {
   prototype: colorPickerFeature.SelectColor url(colorPicker.tis);
-  background-color: black;
+  background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
   width: *;
   height: width(56.25%);
-  color: white;
+  color: black;
+}
+
+.addColor {
+  prototype: colorPickerFeature.AddColor url(colorPicker.tis);
+  text-align: center;
+  font-size: 14dip;
+  border: 2dip solid limegreen;
+  color: limegreen;
+}
+
+.addColor:hover {
+  color: black;
+  background-color: limegreen;
+}
+
+.editColor {
+  prototype: colorPickerFeature.EditColor url(colorPicker.tis);
+  text-align: center;
+  font-size: 14dip;
+  border: 2dip solid yellow;
+  color: yellow;
+}
+
+.editColor:hover {
+  color: black;
+  background-color: yellow;
+}
+
+.deleteColor {
+  prototype: colorPickerFeature.DeleteColor url(colorPicker.tis);
+  text-align: center;
+  font-size: 14dip;
+  border: 2dip solid red;
+  color: red;
+}
+
+.deleteColor:hover {
+  color: black;
+  background-color: red;
 }
 
 hiddenLayer {
   display: none;
 }
 
-row {
-  width: *;
-  horizontal-align: middle;
-  vertical-align: middle;
-}
+//div.editColorPopup > div {
+//  flow: horizontal-wrap;
+//  width: max-width;  
+//  margin: auto;
+//}
 
 div.previewColor > p {
   font-size: 6vh;
@@ -112,7 +159,7 @@ div.colorControl > p {
   font-size: 2vh;
 }
 
-div.removeColor > p {
+div.resetColor > p {
   font-size: 2vh;
 }
 

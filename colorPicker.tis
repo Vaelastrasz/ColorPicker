@@ -1,38 +1,38 @@
 namespace colorPickerFeature {
 
-  //states, maybe wrap to class?
-  var currentColor = "#000000";
   var colorBlocks = [];
+  var currentColor;
+  var preview;
+  var paliter;
+
+  function self.ready() {
+    preview = $(.previewColor);
+    paliter = $(.colorsPaliter); 
+    stdout.println("PREVIEW ATTACHED");
+  }
 
   function setCurrentColor(color) {
     currentColor = color;
+    preview.style#background-color = currentColor;
+    stdout.println("COLOR SET TO" + currentColor);
   }
-
-  const preview = $(.previewColor) 
-  //
 
   class ColorPicker: Element {
     function attached() {
       this.onClick = onClick;
     }
     function onClick() {
-      $(.colorControl).popup($(.selectColorPopup), 2); //how to get self? especially
-                                                       //if there are many ctrls!
+      this.popup($(.editColorPopup), 2);
+      setCurrentColor(this.style#background-color);
     }
     function detached(){}
-    function onMouse(evt) {}
-
   }
 
   class PreviewColor: Element {
-    function attached() {
-      // preview.style#background-color = currentColor;
-      // preview.value = "";
-      //TODO: think about saving to JSON and serialize it to file
-    }
+    function attached() {}
   }
 
-  class RemoveColor: Element {
+  class ResetColor: Element {
     function attached() {
       this.onClick = onClick;
     }
@@ -54,7 +54,6 @@ namespace colorPickerFeature {
   class ColorsPaliter: Element {
 
     const maxElementWidth = 700;
-    const paliter = $(.colorsPaliter);
     function attached() {
       stdout.println("ColorsPaliter Attached");
       view.on("size", function() {
@@ -62,4 +61,26 @@ namespace colorPickerFeature {
       });
     }
   }
+
+  class AddColor: Element {
+
+    function attached() {
+      this.onClick = onClick;
+    }
+
+    function onClick() {
+      var chosenColor = $(widget#color).value.toString();
+      var sampleBlock = "<div class=\"colorBlock colorControl\" />";
+      
+      paliter.append(sampleBlock);
+      colorBlocks.push(chosenColor);
+
+      paliter[paliter.length - 1].style#background-color = color(chosenColor);
+      setCurrentColor(chosenColor);
+      
+      $(.selectColorPopup).closePopup();
+      return true; //stopPropagation()
+    }
+  }
+
 }

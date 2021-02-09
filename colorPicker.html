@@ -16,24 +16,30 @@
       </widget>
       <div class="addColor">Add color to paliter</div>
     </div>
+    <div class="editColorPopup">
+      <widget|hsv #color>
+        <div.layers>
+          <div.saturation/>
+          <div.value/>          
+          <div.pointer/>
+        </div>
+        <input|hslider.hue min=0 max=360 />
+      </widget>
+      <div class="editColor">Edit color</div>
+      <div class="deleteColor">Delete color</div>
+    </div>
   </hiddenLayer>
   <div class="colorBlock previewColor" />
   <div class="colorsPaliter" type="mesh">
-    <div class="colorBlock removeColor">
+    <div class="colorBlock resetColor">
       <p>Remove color</p>
     </div>
-    <div class="colorBlock colorControl">
-      <p>1</p>
-    </div>
-    <div class="colorBlock colorControl">
-      <p>2</p>
-    </div>
-    <div class="colorBlock colorControl">
-      <p>3</p>
-    </div>
     <div class="colorBlock selectColor">
-      <p>Select new color</p>
+      <p>Add new color</p> <!--CHANGE THIS-->
     </div>
+    <!-- <div class="controlPanel"> -->
+    <div class="colorBlock colorControl" />
+      <!-- <p>3</p> -->
   </div>
 </body> 
 </html>
