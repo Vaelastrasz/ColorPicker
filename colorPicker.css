@@ -88,7 +88,7 @@ widget[type=hsv] > div.layers > div.pointer {
 
 .resetColor {
   prototype: colorPickerFeature.ResetColor url(colorPicker.tis);
-  background-color: black;
+  background-color: red;
   width: *;
   height: width(56.25%);
   color: white;

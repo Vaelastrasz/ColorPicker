@@ -42,6 +42,29 @@ namespace colorPickerFeature {
     }
   }
 
+  class EditColor: Element {
+    function attached() {
+      this.onClick = onClick;
+    }
+    function onClick() {
+      var editedColor = $(widget#color).value.toString();
+      this.parent.owner.style#background-color = color(editedColor);
+      setCurrentColor(editedColor);
+    }
+  }
+
+  class DeleteColor: Element {
+    function attached() {
+      this.onClick = onClick;
+    }
+    function onClick() {
+      stdout.println(this.parent.owner);
+      this.parent.owner.remove();  //TODO: FIX THIS FCKING HACK
+      setCurrentColor(paliter.first.style#background-color);
+      //array work
+    }
+  }
+
   class SelectColor: Element {
     function attached() {
       this.onClick = onClick;
