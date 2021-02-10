@@ -1,30 +1,44 @@
 namespace colorPickerFeature {
 
   var colorBlocks = [];
-  var currentColor;
+  var colorPopup;
   var preview;
   var paliter;
 
+  var _currentColor;
+  property m_color(inputColor) {
+    get {
+      return _currentColor;
+    } set {
+      _currentColor = inputColor;
+      preview.style#background-color = _currentColor; //CHANGE IT TO EVENT
+    }
+  }
+
   function self.ready() {
     preview = $(.previewColor);
-    paliter = $(.colorsPaliter); 
+    paliter = $(.colorsPaliter);
+    colorPopup = $(.selectColorPopup); 
     stdout.println("PREVIEW ATTACHED");
   }
 
-  function setCurrentColor(color) {
-    currentColor = color;
-    preview.style#background-color = currentColor;
-    stdout.println("COLOR SET TO" + currentColor);
-  }
-
   class ColorPicker: Element {
+    var editBtn;
+    var deleteBtn;
+
     function attached() {
       this.onClick = onClick;
+      editBtn = $(.editColor);
+      deleteBtn = $(.deleteColor);
+      stdout.println("edit:" + editBtn + " delete:" + deleteBtn);
     }
+    
     function onClick() {
-      this.popup($(.editColorPopup), 2);
-      setCurrentColor(this.style#background-color);
+      colorPopup.attributes["type"] = "edit";
+      this.popup(colorPopup, 2);
+      m_color = this.style#background-color;
     }
+
     function detached(){}
   }
 
@@ -37,8 +51,7 @@ namespace colorPickerFeature {
       this.onClick = onClick;
     }
     function onClick() {
-      preview.style#background-color = "#000000"
-      currentColor = "#000000";
+      m_color = "black";
     }
   }
 
@@ -49,7 +62,7 @@ namespace colorPickerFeature {
     function onClick() {
       var editedColor = $(widget#color).value.toString();
       this.parent.owner.style#background-color = color(editedColor);
-      setCurrentColor(editedColor);
+      m_color = editedColor;
     }
   }
 
@@ -59,8 +72,8 @@ namespace colorPickerFeature {
     }
     function onClick() {
       stdout.println(this.parent.owner);
-      this.parent.owner.remove();  //TODO: FIX THIS FCKING HACK
-      setCurrentColor(paliter.first.style#background-color);
+      this.parent.owner.remove(); 
+      m_color = paliter.first.style#background-color;
       //array work
     }
   }
@@ -70,7 +83,8 @@ namespace colorPickerFeature {
       this.onClick = onClick;
     }
     function onClick() {
-      $(.selectColor).popup($(.selectColorPopup), 2);
+      colorPopup.attributes["type"] = "add";
+      $(.selectColor).popup(colorPopup, 2);
     }
   }
 
@@ -99,9 +113,9 @@ namespace colorPickerFeature {
       colorBlocks.push(chosenColor);
 
       paliter[paliter.length - 1].style#background-color = color(chosenColor);
-      setCurrentColor(chosenColor);
+      m_color = chosenColor;
       
-      $(.selectColorPopup).closePopup();
+      colorPopup.closePopup();
       return true; //stopPropagation()
     }
   }

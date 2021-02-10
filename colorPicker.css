@@ -56,8 +56,27 @@ widget[type=hsv] > div.layers > div.pointer {
 .colorBlock:hover {
   border: 5dip solid grey;
 }
+
 .colorsPaliter {
   prototype: colorPickerFeature.ColorsPaliter url(colorPicker.tis);
+}
+
+.selectColorPopup[type="add"] > .addColor {
+  display: block;
+}
+
+.selectColorPopup[type="add"] > .deleteColor,
+.selectColorPopup[type="add"] > .editColor {
+  display: none;
+}
+
+.selectColorPopup[type="edit"] > .addColor {
+  display: none;
+}
+
+.selectColorPopup[type="edit"] > .deleteColor,
+.selectColorPopup[type="edit"] > .editColor {
+  display: block;
 }
 
 .colorsPaliter[type="row"]{
@@ -88,7 +107,7 @@ widget[type=hsv] > div.layers > div.pointer {
 
 .resetColor {
   prototype: colorPickerFeature.ResetColor url(colorPicker.tis);
-  background-color: red;
+  background-color: black;
   width: *;
   height: width(56.25%);
   color: white;
@@ -145,24 +164,18 @@ hiddenLayer {
   display: none;
 }
 
-//div.editColorPopup > div {
-//  flow: horizontal-wrap;
-//  width: max-width;  
-//  margin: auto;
-//}
-
-div.previewColor > p {
+.previewColor > p {
   font-size: 6vh;
 }
 
-div.colorControl > p {
+.colorControl > p {
   font-size: 2vh;
 }
 
-div.resetColor > p {
+.resetColor > p {
   font-size: 2vh;
 }
 
-div.selectColor > p {
+.selectColor > p {
   font-size: 2vh;
 }
