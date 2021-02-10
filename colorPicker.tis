@@ -27,9 +27,11 @@ namespace colorPickerFeature {
     var deleteBtn;
 
     function attached() {
-      this.onClick = onClick;
       editBtn = $(.editColor);
       deleteBtn = $(.deleteColor);
+      this.onClick = onClick;
+      editBtn.onClick = editClick;
+      deleteBtn.onClick = deleteClick;
       stdout.println("edit:" + editBtn + " delete:" + deleteBtn);
     }
     
@@ -37,6 +39,19 @@ namespace colorPickerFeature {
       colorPopup.attributes["type"] = "edit";
       this.popup(colorPopup, 2);
       m_color = this.style#background-color;
+    }
+
+    function editClick() {
+      var editedColor = $(widget#color).value.toString();
+      this.parent.owner.style#background-color = color(editedColor);
+      m_color = editedColor;
+    }
+    
+    function deleteClick() {
+      stdout.println(this.parent.owner);
+      this.parent.owner.remove(); 
+      m_color = paliter.first.style#background-color;
+      //struct work
     }
 
     function detached(){}
@@ -55,36 +70,34 @@ namespace colorPickerFeature {
     }
   }
 
-  class EditColor: Element {
-    function attached() {
-      this.onClick = onClick;
-    }
-    function onClick() {
-      var editedColor = $(widget#color).value.toString();
-      this.parent.owner.style#background-color = color(editedColor);
-      m_color = editedColor;
-    }
-  }
-
-  class DeleteColor: Element {
-    function attached() {
-      this.onClick = onClick;
-    }
-    function onClick() {
-      stdout.println(this.parent.owner);
-      this.parent.owner.remove(); 
-      m_color = paliter.first.style#background-color;
-      //array work
-    }
-  }
-
   class SelectColor: Element {
+    var addBtn;
+
     function attached() {
       this.onClick = onClick;
+      addBtn = $(.addColor);
+      addBtn.onClick = addClick;
     }
+
     function onClick() {
       colorPopup.attributes["type"] = "add";
       $(.selectColor).popup(colorPopup, 2);
+    }
+
+    function addClick() {
+      stdout.println("ADD COLOR CLICK");
+      var chosenColor = $(widget#color).value.toString();
+      var sampleBlock = "<div class=\"colorBlock colorControl\" />";
+      
+      paliter.append(sampleBlock);
+      colorBlocks.push(chosenColor);
+
+      paliter[paliter.length - 1].style#background-color = color(chosenColor);
+      m_color = chosenColor;
+      
+      colorPopup.closePopup();
+
+      stdout.println("ADD COLOR CLICK");
     }
   }
 
@@ -98,26 +111,4 @@ namespace colorPickerFeature {
       });
     }
   }
-
-  class AddColor: Element {
-
-    function attached() {
-      this.onClick = onClick;
-    }
-
-    function onClick() {
-      var chosenColor = $(widget#color).value.toString();
-      var sampleBlock = "<div class=\"colorBlock colorControl\" />";
-      
-      paliter.append(sampleBlock);
-      colorBlocks.push(chosenColor);
-
-      paliter[paliter.length - 1].style#background-color = color(chosenColor);
-      m_color = chosenColor;
-      
-      colorPopup.closePopup();
-      return true; //stopPropagation()
-    }
-  }
-
 }

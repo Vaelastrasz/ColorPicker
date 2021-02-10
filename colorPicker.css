@@ -122,7 +122,6 @@ widget[type=hsv] > div.layers > div.pointer {
 }
 
 .addColor {
-  prototype: colorPickerFeature.AddColor url(colorPicker.tis);
   text-align: center;
   font-size: 14dip;
   border: 2dip solid limegreen;
@@ -135,7 +134,6 @@ widget[type=hsv] > div.layers > div.pointer {
 }
 
 .editColor {
-  prototype: colorPickerFeature.EditColor url(colorPicker.tis);
   text-align: center;
   font-size: 14dip;
   border: 2dip solid yellow;
@@ -148,7 +146,6 @@ widget[type=hsv] > div.layers > div.pointer {
 }
 
 .deleteColor {
-  prototype: colorPickerFeature.DeleteColor url(colorPicker.tis);
   text-align: center;
   font-size: 14dip;
   border: 2dip solid red;
