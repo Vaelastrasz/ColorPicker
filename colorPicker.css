@@ -50,7 +50,6 @@ widget[type=hsv] > div.layers > div.pointer {
   width: *;
   height: width(56.25%);
   background-color: black;
-  prototype: colorPickerFeature.PreviewColor url(colorPicker.tis);
 }
 
 .colorBlock:hover {
