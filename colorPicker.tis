@@ -4,18 +4,19 @@ namespace colorPickerFeature {
   var ui_colorPopup;
   var ui_preview;
   var ui_paliter;
-
+  var ui_resetPreview;
 
 
   function self.ready() {
     ui_preview = $(.previewColor);
     ui_paliter = $(.colorsPaliter);
-    ui_colorPopup = $(.selectColorPopup); 
+    ui_colorPopup = $(.selectColorPopup);
+    ui_resetPreview = $(.resetColor);
     stdout.println("PREVIEW ATTACHED");
   }
 
   class GeneralController {
-    var colorBlocks = [];
+    var m_blocks = [];
     var _currentColor;
     property m_color(inputColor) {
       get {
@@ -29,44 +30,74 @@ namespace colorPickerFeature {
     function setCurrentColor(color) {
       m_color = color;
     }
+
+    function generateId() {
+      const id = `f${(+new Date).toString(16)}`;
+      stdout.println(id);
+      return id;
+    }
+
+    function generateBlock(_color, _isActive = false) {
+      var blockElement = {
+        id: generateId();
+        color: _color;
+        isActive: _isActive;
+      }
+      return blockElement;
+    }
   
     function updateUi() {
-      if (removeAllBlocks()) {
-        //add blocks from existing array
-      } else {
-        stdout.println("Removing color error occured!");
-        return false;
+      if (removeAllBlocks() && addColorsToUI()) {
+        stdout.println("Updating UI success!");
+        return true;  
       }
+      stdout.println("Updating UI error occured!");
+      return false;
     }
     
-    function addNewBlock(color, isAddToArray = true) {
+    function addNewBlock(color) {
       var sampleBlock = "<div class=\"colorBlock colorControl\" />";
       ui_paliter.append(sampleBlock);
+      ui_paliter[ui_paliter.length - 1].style#background-color = color;
       
+      var generatedBlock = generateBlock(color, true);
+      // m_blocks.push(color);
+      m_blocks.push(generatedBlock);
       setCurrentColor(color);
-      if (isAddToArray)
-        colorBlocks.append(color);
     }
     
-    function removeBlock(color) {} //is find by color seems OK? 
+    function removeBlock(blockId) {} //is find by color seems OK? 
                                    //have to implement ID!
+    function editBlock(blockId) {}
 
     function removeAllBlocks() {
-      stdout.println("Start removing all");
+      var availableBlocks = $$(.colorControl);
       var i;
-      for (i = 2; i < paliter.children.length; i++) {
-        paliter.children[i].remove(); //check
+      for (i = 0; i < availableBlocks.length; i++) {
+        availableBlocks[i].remove(); 
       }
+      m_blocks = [];
 
-      stdout.println("End removing all! Children left: " + paliter.children);
-      if (paliter.children.length === 2) 
-        return true;
-      return false;
+      setCurrentColor(ui_resetPreview.style#background-color);
+      return true;
+    }
+
+    function addColorsToUI() {
+      for (var block in m_blocks) {
+        stdout.println(block);
+        var sampleBlock = "<div class=\"colorBlock colorControl\" />";
+        ui_paliter.append(sampleBlock);
+        ui_paliter[ui_paliter.length - 1].style#background-color = block;
+
+        setCurrentColor(block);
+      }
+      return true;
     }
 
     function setBlockArray(colorArray) {
-      colorBlocks = colorArray; //PostEvent to updateUI
-      // colorBlocks.forEach(:colorElement: addNewBlock(colorElement, false));
+      removeAllBlocks();
+      m_blocks = colorArray;
+      addColorsToUI();
     }
   }
 
@@ -123,29 +154,19 @@ namespace colorPickerFeature {
 
     function onClick() {
       ui_colorPopup.attributes["type"] = "add";
-      $(.selectColor).popup(ui_colorPopup, 2);
+      this.popup(ui_colorPopup, 2);
     }
 
     function addClick() {
-      stdout.println("ADD COLOR CLICK");
       var chosenColor = $(widget#color).value.toString();
-      var sampleBlock = "<div class=\"colorBlock colorControl\" />";
-      ui_paliter.append(sampleBlock);
-      // colorBlocks.push(chosenColor);
-      // GeneralController.addNewBlock(chosenColor);
-
-      ui_paliter[ui_paliter.length - 1].style#background-color = color(chosenColor);
-      GeneralController.setCurrentColor(chosenColor);
-      
+      GeneralController.addNewBlock(chosenColor);      
       ui_colorPopup.closePopup();
-
-      stdout.println("ADD COLOR CLICK");
     }
   }
 
   class ColorsPaliter: Element {
 
-    const maxElementWidth = 700;
+    const maxElementWidth = 550;
     function attached() {
       stdout.println("ColorsPaliter Attached");
       view.on("size", function() {
