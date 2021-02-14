@@ -28,7 +28,6 @@ namespace colorPickerFeature {
     var m_currentBlock;
 
     function resetPreview() {
-      // ui_preview.style#background-color = ui_resetPreview.style#background-color;
       self.postEvent("resetPreview");
     }
 
@@ -38,14 +37,15 @@ namespace colorPickerFeature {
     }
 
     function getBlockByDOM(DOMElement) {
-      var searchedBlock = m_blocks.find(:block: block.id == DOMElement.attributes["blockID"]);
-      // stdout.println("Searched ID = " + DOMElement.attributes["blockID"]);
-      // stdout.println("Found ID = " + searchedBlock.id);
-      return searchedBlock;
+      return getBlockByID(DOMElement.attributes["blockID"]);
     }
 
     function getBlockByID(searchID) {
-      return m_blocks.find(:block: block.id == searchID);
+      var blockToSearch = m_blocks.find(:block: block.id == searchID);
+      stdout.println("SearchID: " + searchID);
+      stdout.println("Block: " + blockToSearch);
+      stdout.println("BlockID: " + blockToSearch.id);
+      return blockToSearch;
     }
 
     function getIndexByID(searchID) {
@@ -56,7 +56,6 @@ namespace colorPickerFeature {
       var id = "id" + Math.random().toString(16).slice(2);
       stdout.println(id);
       return id;
-      // return 1; //change it back
     }
 
     function generateBlock(_color) {
@@ -75,7 +74,6 @@ namespace colorPickerFeature {
     }
     
     function deleteBlock(id) {
-      stdout.println("Starting to delete " + id);
       var indexToDelete = getIndexByID(id);
       m_blocks.splice(indexToDelete, 1);
       resetPreview();
@@ -125,7 +123,7 @@ namespace colorPickerFeature {
         var blockToInsert = "<div class=\"colorBlock colorControl\" />";
         ui_paliter.append(blockToInsert);
         ui_paliter[ui_paliter.length - 1].attributes["blockID"] = block.id;
-        ui_paliter[ui_paliter.length - 1].style#background-color = block.color; //CHANGE IT TO CSS SELECTOR [$(.colorControl[blockID=1])]
+        ui_paliter[ui_paliter.length - 1].style#background-color = block.color; 
 
         setCurrentBlock(block);
       }
@@ -161,16 +159,14 @@ namespace colorPickerFeature {
 
     function editClick() {
       var newColor = $(widget#color).value.toString();
-      this.parent.owner.style#background-color = color(newColor); //fix
       GeneralController.editBlock(this.parent.owner.attributes["blockID"], newColor);
+      this.parent.owner.style#background-color = color(newColor);
     }
 
     function deleteClick() {
-      stdout.println(this);
-      this.parent.owner.remove();
       GeneralController.deleteBlock(this.parent.owner.attributes["blockID"]);
+      this.parent.owner.remove();
     }
-
   }
 
   class ResetColor: Element {
