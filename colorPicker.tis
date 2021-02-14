@@ -15,35 +15,75 @@ namespace colorPickerFeature {
     stdout.println("PREVIEW ATTACHED");
   }
 
+  class Preview : Element {
+    function attached() {
+      self.on("colorChanged", function(evt){ui_preview.style#background-color = evt.data.color;});
+      self.on("resetPreview", function(evt){ui_preview.style#background-color = ui_resetPreview.style#background-color;});
+    }
+  }
+
   class GeneralController {
+    
     var m_blocks = [];
-    var _currentColor;
-    property m_color(inputColor) {
-      get {
-        return _currentColor;
-      } set {
-        _currentColor = inputColor;
-        ui_preview.style#background-color = _currentColor; //CHANGE IT TO EVENT
-      }
+    var m_currentBlock;
+
+    function resetPreview() {
+      // ui_preview.style#background-color = ui_resetPreview.style#background-color;
+      self.postEvent("resetPreview");
     }
 
-    function setCurrentColor(color) {
-      m_color = color;
+    function setCurrentBlock(block) {
+      m_currentBlock = block;
+      self.postEvent("colorChanged", {color: block.color});
+    }
+
+    function getBlockByDOM(DOMElement) {
+      var searchedBlock = m_blocks.find(:block: block.id == DOMElement.attributes["blockID"]);
+      // stdout.println("Searched ID = " + DOMElement.attributes["blockID"]);
+      // stdout.println("Found ID = " + searchedBlock.id);
+      return searchedBlock;
+    }
+
+    function getBlockByID(searchID) {
+      return m_blocks.find(:block: block.id == searchID);
+    }
+
+    function getIndexByID(searchID) {
+      return m_blocks.indexOf(getBlockByID(searchID));
     }
 
     function generateId() {
-      const id = `f${(+new Date).toString(16)}`;
+      var id = "id" + Math.random().toString(16).slice(2);
       stdout.println(id);
       return id;
+      // return 1; //change it back
     }
 
-    function generateBlock(_color, _isActive = false) {
+    function generateBlock(_color) {
       var blockElement = {
         id: generateId();
         color: _color;
-        isActive: _isActive;
       }
+      stdout.println("Element generated! Id: " + blockElement.id);
       return blockElement;
+    }
+
+    function editBlock(id, newColor) {
+      var blockToEdit = getBlockByID(id);
+      blockToEdit.color = newColor;
+      setCurrentBlock(blockToEdit);
+    }
+    
+    function deleteBlock(id) {
+      stdout.println("Starting to delete " + id);
+      var indexToDelete = getIndexByID(id);
+      m_blocks.splice(indexToDelete, 1);
+      resetPreview();
+      if (m_blocks.length > 0) {
+        setCurrentBlock(m_blocks[m_blocks.length - 1]);
+      } else {
+        m_currentBlock = undefined;
+      }
     }
   
     function updateUi() {
@@ -57,39 +97,37 @@ namespace colorPickerFeature {
     
     function addNewBlock(color) {
       var sampleBlock = "<div class=\"colorBlock colorControl\" />";
+      var generatedBlock = generateBlock(color);
+
       ui_paliter.append(sampleBlock);
       ui_paliter[ui_paliter.length - 1].style#background-color = color;
+      ui_paliter[ui_paliter.length - 1].attributes["blockID"] = generatedBlock.id;
       
-      var generatedBlock = generateBlock(color, true);
-      // m_blocks.push(color);
       m_blocks.push(generatedBlock);
-      setCurrentColor(color);
+      stdout.println("Added block " + generatedBlock.id + " \nNew blockArray: " + m_blocks);
+      setCurrentBlock(generatedBlock);
     }
     
-    function removeBlock(blockId) {} //is find by color seems OK? 
-                                   //have to implement ID!
-    function editBlock(blockId) {}
-
     function removeAllBlocks() {
       var availableBlocks = $$(.colorControl);
-      var i;
-      for (i = 0; i < availableBlocks.length; i++) {
+      for (var i = 0; i < availableBlocks.length; i++) {
         availableBlocks[i].remove(); 
       }
       m_blocks = [];
 
-      setCurrentColor(ui_resetPreview.style#background-color);
+      resetPreview();
       return true;
     }
 
     function addColorsToUI() {
       for (var block in m_blocks) {
         stdout.println(block);
-        var sampleBlock = "<div class=\"colorBlock colorControl\" />";
-        ui_paliter.append(sampleBlock);
-        ui_paliter[ui_paliter.length - 1].style#background-color = block;
+        var blockToInsert = "<div class=\"colorBlock colorControl\" />";
+        ui_paliter.append(blockToInsert);
+        ui_paliter[ui_paliter.length - 1].attributes["blockID"] = block.id;
+        ui_paliter[ui_paliter.length - 1].style#background-color = block.color; //CHANGE IT TO CSS SELECTOR [$(.colorControl[blockID=1])]
 
-        setCurrentColor(block);
+        setCurrentBlock(block);
       }
       return true;
     }
@@ -109,29 +147,30 @@ namespace colorPickerFeature {
       this.editBtn = $(.editColor);
       this.deleteBtn = $(.deleteColor);
       this.onClick = onClick;
-      editBtn.onClick = editClick.bind(this);
-      deleteBtn.onClick = deleteClick.bind(this);
+      // this.editBtn.onClick = editClick.bind(this);
+      // this.deleteBtn.onClick = deleteClick.bind(this);
+      this.editBtn.onClick = editClick;
+      this.deleteBtn.onClick = deleteClick;
     }
     
     function onClick() {
       ui_colorPopup.attributes["type"] = "edit";
       this.popup(ui_colorPopup, 2);
-      GeneralController.setCurrentColor(this.style#background-color);
+      GeneralController.setCurrentBlock(GeneralController.getBlockByDOM(this));
     }
 
     function editClick() {
-      var editedColor = $(widget#color).value.toString();
-      this.style#background-color = color(editedColor); //fix
-      GeneralController.setCurrentColor(editedColor);
+      var newColor = $(widget#color).value.toString();
+      this.parent.owner.style#background-color = color(newColor); //fix
+      GeneralController.editBlock(this.parent.owner.attributes["blockID"], newColor);
     }
 
     function deleteClick() {
       stdout.println(this);
-      this.remove(); 
-      GeneralController.setCurrentColor(ui_paliter.first.style#background-color);
+      this.parent.owner.remove();
+      GeneralController.deleteBlock(this.parent.owner.attributes["blockID"]);
     }
 
-    function detached(){}
   }
 
   class ResetColor: Element {
@@ -139,7 +178,7 @@ namespace colorPickerFeature {
       this.onClick = onClick;
     }
     function onClick() {
-      GeneralController.setCurrentColor("black");
+      GeneralController.resetPreview();
     }
   }
 
