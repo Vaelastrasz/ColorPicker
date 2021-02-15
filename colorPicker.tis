@@ -25,19 +25,14 @@ namespace colorPickerFeature {
   class PersistData {
       var m_currentBlock;  
       var m_blocks = [];
-  }
-
-  class GeneralController {
-    
-    var persist = new PersistData();  
 
     function serializeToJSON() {
       const outputStream = Stream.openFile("D:\\Shared\\Projects\\ColorPicker\\resources\\data.clr", "w");
       
-      const current = JSON.stringify(persist.m_currentBlock);
+      const current = JSON.stringify(m_currentBlock);
       outputStream.println(current); 
       
-      const array = JSON.stringify(persist.m_blocks);
+      const array = JSON.stringify(m_blocks);
       outputStream.println(array);
       
       outputStream.close();
@@ -48,43 +43,56 @@ namespace colorPickerFeature {
       const inputStream = Stream.openFile("D:\\Shared\\Projects\\ColorPicker\\resources\\data.clr", "r");
       
       var currentRead = inputStream.readln();
-      persist.m_currentBlock = JSON.parse(currentRead);
+      m_currentBlock = JSON.parse(currentRead);
       
       var blocksRead = inputStream.readln();
-      persist.m_blocks = JSON.parse(blocksRead);
+      m_blocks = JSON.parse(blocksRead);
       
-      updateUi(false);
+      GeneralController.updateUi(false);
       inputStream.close();
     }
+
+    function setCurrentModelItem(item) {
+      m_currentBlock = item;
+    }
+
+    function getBlockByID(searchID) {
+      var blockToSearch = m_blocks.find(:block: block.id == searchID);
+      return blockToSearch;
+    }
+
+    function getIndexByID(searchID) {
+      return m_blocks.indexOf(getBlockByID(searchID));
+    }
+
+    function setItemArray(items) {
+      m_blocks = items;
+    }
+  }
+
+  class GeneralController {
+    
+    var persist = new PersistData();  
 
     function resetPreview() {
       self.postEvent("resetPreview");
     }
 
     function setCurrentBlock(block) {
-      persist.m_currentBlock = block;
+      persist.setCurrentModelItem(block);
       self.postEvent("colorChanged", {color: block.color});
     }
 
     function getBlockByDOM(DOMElement) {
-      return getBlockByID(DOMElement.attributes["blockID"]);
-    }
-
-    function getBlockByID(searchID) {
-      var blockToSearch = persist.m_blocks.find(:block: block.id == searchID);
-      stdout.println("SearchID: " + searchID);
-      stdout.println("Block: " + blockToSearch);
-      stdout.println("BlockID: " + blockToSearch.id);
-      return blockToSearch;
-    }
-
-    function getIndexByID(searchID) {
-      return persist.m_blocks.indexOf(getBlockByID(searchID));
+      return persist.getBlockByID(DOMElement.attributes["blockID"]);
     }
 
     function generateId() {
       var id = "id" + Math.random().toString(16).slice(2);
       stdout.println(id);
+      while (persist.getBlockByID(id)) { 
+        id = "id" + Math.random().toString(16).slice(2); //unique ID fix
+      } 
       return id;
     }
 
@@ -98,13 +106,13 @@ namespace colorPickerFeature {
     }
 
     function editBlock(id, newColor) {
-      var blockToEdit = getBlockByID(id);
+      var blockToEdit = persist.getBlockByID(id);
       blockToEdit.color = newColor;
       setCurrentBlock(blockToEdit);
     }
     
     function deleteBlock(id) {
-      var indexToDelete = getIndexByID(id);
+      var indexToDelete = persist.getIndexByID(id);
       persist.m_blocks.splice(indexToDelete, 1);
       resetPreview();
       if (persist.m_blocks.length > 0) {
@@ -141,7 +149,8 @@ namespace colorPickerFeature {
       for (var i = 0; i < availableBlocks.length; i++) {
         availableBlocks[i].remove(); 
       }
-      if (isDeleteOldBlocks) {
+
+      if (isDeleteOldData) {
         persist.m_blocks = [];
       }
 
@@ -165,7 +174,7 @@ namespace colorPickerFeature {
 
     function setBlockArray(colorArray) {
       removeAllBlocks();
-      persist.m_blocks = colorArray;
+      persist.setItemArray(colorArray);
       addColorsToUI();
     }
   }
@@ -207,9 +216,9 @@ namespace colorPickerFeature {
       this.onClick = onClick;
     }
     function onClick() {
-      GeneralController.resetPreview();
-      // GeneralController.serializeToJSON();
-      // GeneralController.deserializeJSON();
+      // GeneralController.resetPreview();
+      GeneralController.persist.serializeToJSON();
+      GeneralController.persist.deserializeJSON();
     }
   }
 
