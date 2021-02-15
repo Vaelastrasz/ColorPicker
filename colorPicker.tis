@@ -1,11 +1,247 @@
+namespace colorPickerFeature {
+
   
-class ColorPicker: Element
-{
-  function attached() {
-    /*init*/
-  }
-  function onMouse(evt) {
-    /*some event handling*/
+  var ui_colorPopup;
+  var ui_preview;
+  var ui_paliter;
+  var ui_resetPreview;
+
+
+  function self.ready() {
+    ui_preview = $(.previewColor);
+    ui_paliter = $(.colorsPaliter);
+    ui_colorPopup = $(.selectColorPopup);
+    ui_resetPreview = $(.resetColor);
+    stdout.println("PREVIEW ATTACHED");
   }
 
+  class Preview : Element {
+    function attached() {
+      self.on("colorChanged", function(evt){ui_preview.style#background-color = evt.data.color;});
+      self.on("resetPreview", function(evt){ui_preview.style#background-color = ui_resetPreview.style#background-color;});
+    }
+  }
+
+  class PersistData {
+      var m_currentBlock;  
+      var m_blocks = [];
+  }
+
+  class GeneralController {
+    
+    var persist = new PersistData();  
+
+    function serializeToJSON() {
+      const outputStream = Stream.openFile("D:\\Shared\\Projects\\ColorPicker\\resources\\data.clr", "w");
+      
+      const current = JSON.stringify(persist.m_currentBlock);
+      outputStream.println(current); 
+      
+      const array = JSON.stringify(persist.m_blocks);
+      outputStream.println(array);
+      
+      outputStream.close();
+    }
+
+    function deserializeJSON() {
+
+      const inputStream = Stream.openFile("D:\\Shared\\Projects\\ColorPicker\\resources\\data.clr", "r");
+      
+      var currentRead = inputStream.readln();
+      persist.m_currentBlock = JSON.parse(currentRead);
+      
+      var blocksRead = inputStream.readln();
+      persist.m_blocks = JSON.parse(blocksRead);
+      
+      updateUi(false);
+      inputStream.close();
+    }
+
+    function resetPreview() {
+      self.postEvent("resetPreview");
+    }
+
+    function setCurrentBlock(block) {
+      persist.m_currentBlock = block;
+      self.postEvent("colorChanged", {color: block.color});
+    }
+
+    function getBlockByDOM(DOMElement) {
+      return getBlockByID(DOMElement.attributes["blockID"]);
+    }
+
+    function getBlockByID(searchID) {
+      var blockToSearch = persist.m_blocks.find(:block: block.id == searchID);
+      stdout.println("SearchID: " + searchID);
+      stdout.println("Block: " + blockToSearch);
+      stdout.println("BlockID: " + blockToSearch.id);
+      return blockToSearch;
+    }
+
+    function getIndexByID(searchID) {
+      return persist.m_blocks.indexOf(getBlockByID(searchID));
+    }
+
+    function generateId() {
+      var id = "id" + Math.random().toString(16).slice(2);
+      stdout.println(id);
+      return id;
+    }
+
+    function generateBlock(_color) {
+      var blockElement = {
+        id: generateId();
+        color: _color;
+      }
+      stdout.println("Element generated! Id: " + blockElement.id);
+      return blockElement;
+    }
+
+    function editBlock(id, newColor) {
+      var blockToEdit = getBlockByID(id);
+      blockToEdit.color = newColor;
+      setCurrentBlock(blockToEdit);
+    }
+    
+    function deleteBlock(id) {
+      var indexToDelete = getIndexByID(id);
+      persist.m_blocks.splice(indexToDelete, 1);
+      resetPreview();
+      if (persist.m_blocks.length > 0) {
+        setCurrentBlock(persist.m_blocks[persist.m_blocks.length - 1]);
+      } else {
+        persist.m_currentBlock = undefined;
+      }
+    }
+  
+    function updateUi(isDeleteOldData = true) {
+      if (removeAllBlocks(isDeleteOldData) && addColorsToUI()) {
+        stdout.println("Updating UI success!");
+        return true;  
+      }
+      stdout.println("Updating UI error occured!");
+      return false;
+    }
+    
+    function addNewBlock(color) {
+      var sampleBlock = "<div class=\"colorBlock colorControl\" />";
+      var generatedBlock = generateBlock(color);
+
+      ui_paliter.append(sampleBlock);
+      ui_paliter[ui_paliter.length - 1].style#background-color = color;
+      ui_paliter[ui_paliter.length - 1].attributes["blockID"] = generatedBlock.id;
+      
+      persist.m_blocks.push(generatedBlock);
+      stdout.println("Added block " + generatedBlock.id + " \nNew blockArray: " + persist.m_blocks);
+      setCurrentBlock(generatedBlock);
+    }
+    
+    function removeAllBlocks(isDeleteOldData = true) {
+      var availableBlocks = $$(.colorControl);
+      for (var i = 0; i < availableBlocks.length; i++) {
+        availableBlocks[i].remove(); 
+      }
+      if (isDeleteOldBlocks) {
+        persist.m_blocks = [];
+      }
+
+      resetPreview();
+      return true;
+    }
+
+    function addColorsToUI() {
+      for (var block in persist.m_blocks) {
+        stdout.println(block);
+        var blockToInsert = "<div class=\"colorBlock colorControl\" />";
+        ui_paliter.append(blockToInsert);
+        ui_paliter[ui_paliter.length - 1].attributes["blockID"] = block.id;
+        ui_paliter[ui_paliter.length - 1].style#background-color = block.color; 
+      }
+      setCurrentBlock(persist.m_currentBlock? persist.m_currentBlock : 
+                                              getBlockByDOM(ui_paliter[ui_paliter.length - 1]));
+
+      return true;
+    }
+
+    function setBlockArray(colorArray) {
+      removeAllBlocks();
+      persist.m_blocks = colorArray;
+      addColorsToUI();
+    }
+  }
+
+  class ColorPicker: Element {
+    this var editBtn;
+    this var deleteBtn;
+
+    function attached() {
+      this.editBtn = $(.editColor);
+      this.deleteBtn = $(.deleteColor);
+      this.onClick = onClick;
+      // this.editBtn.onClick = editClick.bind(this);
+      // this.deleteBtn.onClick = deleteClick.bind(this);
+      this.editBtn.onClick = editClick;
+      this.deleteBtn.onClick = deleteClick;
+    }
+    
+    function onClick() {
+      ui_colorPopup.attributes["type"] = "edit";
+      this.popup(ui_colorPopup, 2);
+      GeneralController.setCurrentBlock(GeneralController.getBlockByDOM(this));
+    }
+
+    function editClick() {
+      var newColor = $(widget#color).value.toString();
+      GeneralController.editBlock(this.parent.owner.attributes["blockID"], newColor);
+      this.parent.owner.style#background-color = color(newColor);
+    }
+
+    function deleteClick() {
+      GeneralController.deleteBlock(this.parent.owner.attributes["blockID"]);
+      this.parent.owner.remove();
+    }
+  }
+
+  class ResetColor: Element {
+    function attached() {
+      this.onClick = onClick;
+    }
+    function onClick() {
+      GeneralController.resetPreview();
+      // GeneralController.serializeToJSON();
+      // GeneralController.deserializeJSON();
+    }
+  }
+
+  class SelectColor: Element {
+    var addBtn;
+
+    function attached() {
+      this.onClick = onClick;
+      addBtn = $(.addColor);
+      addBtn.onClick = addClick;
+    }
+
+    function onClick() {
+      ui_colorPopup.attributes["type"] = "add";
+      this.popup(ui_colorPopup, 2);
+    }
+
+    function addClick() {
+      var chosenColor = $(widget#color).value.toString();
+      GeneralController.addNewBlock(chosenColor);      
+      ui_colorPopup.closePopup();
+    }
+  }
+
+  class ColorsPaliter: Element {
+
+    const maxElementWidth = 550;
+    function attached() {
+      stdout.println("ColorsPaliter Attached");
+      view.on("size", function() {
+        ui_paliter.attributes["type"]  = (ui_paliter.box(#width) < maxElementWidth ? "mesh" : "row");
+      });
+    }
+  }
 }

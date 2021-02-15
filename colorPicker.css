@@ -1,38 +1,178 @@
+widget[type=hsv] {
+  var(hue): #ff0000;
+  prototype: HSVSelector url(HSVSelector.tis);
+  size:max-content;
+}
+
+widget[type=hsv] > input.hue
+{
+  display:block; 
+  border:none;
+  height: 3dip;
+  width:170dip;
+  margin:0 *;
+  background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+}
+
+widget[type=hsv] > div.layers { 
+  size:180dip;
+  flow:stack;
+  margin:*;
+}
+
+widget[type=hsv] > div.layers > div.value {
+  size:*;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.0) 1%, rgba(0,0,0,1.0) 100%); 
+}
+
+widget[type=hsv] > div.layers > div.saturation {
+  size:*;
+  background: linear-gradient(to right, color(hue) 0%, #ffffff 100%); 
+}
+
+widget[type=hsv] > div.layers > div.pointer {
+  border:2dip solid #fff;
+  size:7dip;
+  transform: translate(-50%,-50%);
+  border-radius:50%;
+}
+
 .colorBlock {
   color: red;
-  text-align:center;
+  text-align: center;
   vertical-align: middle;
   border-radius: 10%;
   margin: 10dip;
   border: 5dip solid black;
 }
+
 .previewColor {
   width: *;
   height: width(56.25%);
   background-color: black;
-  prototype: PreviewColor;
+  prototype: colorPickerFeature.Preview url(colorPicker.tis)
 }
+
 .colorBlock:hover {
-  border: 5dip solid limegreen;
+  border: 5dip solid grey;
 }
+
 .colorsPaliter {
-  
+  prototype: colorPickerFeature.ColorsPaliter url(colorPicker.tis);
 }
+
+.selectColorPopup[type="add"] > .addColor {
+  display: block;
+}
+
+.selectColorPopup[type="add"] > .deleteColor,
+.selectColorPopup[type="add"] > .editColor {
+  display: none;
+}
+
+.selectColorPopup[type="edit"] > .addColor {
+  display: none;
+}
+
+.selectColorPopup[type="edit"] > .deleteColor,
+.selectColorPopup[type="edit"] > .editColor {
+  display: block;
+}
+
+.colorsPaliter[type="row"]{
+  flow: horizontal-wrap;
+}
+
+.colorsPaliter[type="row"] > div{
+  width: 180dip;
+}
+
+.colorsPaliter[type="mesh"] > div {
+  width: *;
+}
+
+.colorsPaliter[type="mesh"]{
+  flow: grid( 1 2 3 4,
+              5 6 7 8,
+              9 10 11 12);
+}
+
 .colorControl {
   width: *;
-  height: width(55.5%); 
+  height: width(56.25%); 
   background-color: purple;
-  prototype: ColorPicker;
+  prototype: colorPickerFeature.ColorPicker url(colorPicker.tis);
   color: white;
 }
-row {
+
+.resetColor {
+  prototype: colorPickerFeature.ResetColor url(colorPicker.tis);
+  background-color: black;
   width: *;
-  horizontal-align: middle;
-  vertical-align: middle;
+  height: width(56.25%);
+  color: white;
 }
-div.previewColor > p {
+
+.selectColor {
+  prototype: colorPickerFeature.SelectColor url(colorPicker.tis);
+  background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+  width: *;
+  height: width(56.25%);
+  color: black;
+}
+
+.addColor {
+  text-align: center;
+  font-size: 14dip;
+  border: 2dip solid limegreen;
+  color: limegreen;
+}
+
+.addColor:hover {
+  color: black;
+  background-color: limegreen;
+}
+
+.editColor {
+  text-align: center;
+  font-size: 14dip;
+  border: 2dip solid yellow;
+  color: yellow;
+}
+
+.editColor:hover {
+  color: black;
+  background-color: yellow;
+}
+
+.deleteColor {
+  text-align: center;
+  font-size: 14dip;
+  border: 2dip solid red;
+  color: red;
+}
+
+.deleteColor:hover {
+  color: black;
+  background-color: red;
+}
+
+hiddenLayer {
+  display: none;
+}
+
+.previewColor > p {
   font-size: 6vh;
 }
-div.colorControl > p {
-  font-size: 3vh;
+
+.colorControl > p {
+  font-size: 2vh;
+}
+
+.resetColor > p {
+  font-size: 2vh;
+}
+
+.selectColor > p {
+  font-size: 2vh;
 }

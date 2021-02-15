@@ -1,0 +1,39 @@
+class HSVSelector: Element  {
+
+this var hue = 0; // 0..360
+this var val = 0.0; // 0..1.0
+this var sat = 0.0; // 0..1.0
+
+function attached() {
+    stdout.println("ATTACHED HSV");
+    var me = this;
+    $(div.value) << event mousedown(evt) {
+        var (w,h) = this.box(#dimension);
+        me.val = 1.0 - (evt.y + 0.5) / h.toFloat(); 
+        me.sat = 1.0 - (evt.x + 0.5) / w.toFloat(); 
+        me.postEvent("change");
+        me.$(div.pointer).style.set {
+        margin-left: evt.x,
+        margin-top: evt.y,
+        };
+    };
+}
+
+event change $(input.hue) (evt, elHue) {
+    this.hue = elHue.value;
+    var color = Color.hsv(this.hue,1,1);
+    this.style.variable("hue", color);
+    this.postEvent("change");
+}
+
+property value(v) {
+    get return Color.hsv( this.hue, this.sat, this.val );
+    set {
+    // left as an exercise for the reader 
+    }
+}
+}
+
+// event change $(widget#color) {
+// $(pre#out).text = this.value.toString();
+// }
