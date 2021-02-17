@@ -1,3 +1,4 @@
 # ColorPicker
- Simple colorPicker implementation using Sciter \r\n
+ Simple colorPicker implementation using Sciter
+ 
  For any questions contact me: chobanitsavlad@gmail.com | t.me/vaelastrasz
