@@ -22,17 +22,36 @@ namespace colorPickerFeature {
     }
   }
 
-  class PersistData {
-      var m_currentBlock;  
-      var m_blocks = [];
+  class PersistAbstractModel {
+    var m_currentItem;
+    var m_items = [];
+    
+    function setCurrentModelItem(item) {
+      m_currentItem = item;
+    }
+
+    function getCurrentModelItem() {
+      return m_currentItem;
+    }
+
+    function setItemsArray(items) {
+      m_items = items;
+    }
+
+    function getItemsArray() {
+      return m_items;
+    }
+  }
+
+  class PersistData : PersistAbstractModel {
 
     function serializeToJSON() {
       const outputStream = Stream.openFile("D:\\Shared\\Projects\\ColorPicker\\resources\\data.clr", "w");
       
-      const current = JSON.stringify(getCurrentModelItem());
+      const current = JSON.stringify(PersistAbstractModel.getCurrentModelItem());
       outputStream.println(current); 
       
-      const array = JSON.stringify(getItemsArray());
+      const array = JSON.stringify(PersistAbstractModel.getItemsArray());
       outputStream.println(array);
       
       outputStream.close();
@@ -43,39 +62,24 @@ namespace colorPickerFeature {
       const inputStream = Stream.openFile("D:\\Shared\\Projects\\ColorPicker\\resources\\data.clr", "r");
       
       var currentRead = inputStream.readln();
-      setCurrentModelItem(JSON.parse(currentRead));
+      PersistAbstractModel.setCurrentModelItem(JSON.parse(currentRead));
       
       var blocksRead = inputStream.readln();
-      setItemsArray(JSON.parse(blocksRead));
+      PersistAbstractModel.setItemsArray(JSON.parse(blocksRead));
       
       GeneralController.updateUi(false);
       inputStream.close();
-    }
-
-    function setCurrentModelItem(item) {
-      m_currentBlock = item;
-    }
-
-    function getCurrentModelItem() {
-      return m_currentBlock;
-    }
+    }  
 
     function getBlockByID(searchID) {
-      var blockToSearch = getItemsArray().find(:block: block.id == searchID);
+      var blockToSearch = PersistAbstractModel.getItemsArray().find(:block: block.id == searchID);
       return blockToSearch;
     }
 
     function getIndexByID(searchID) {
-      return getItemsArray().indexOf(getBlockByID(searchID));
+      return PersistAbstractModel.getItemsArray().indexOf(getBlockByID(searchID));
     }
 
-    function setItemsArray(items) {
-      m_blocks = items;
-    }
-
-    function getItemsArray() {
-      return m_blocks;
-    }
   }
 
   class GeneralController {
