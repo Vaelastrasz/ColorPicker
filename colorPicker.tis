@@ -22,17 +22,36 @@ namespace colorPickerFeature {
     }
   }
 
-  class PersistData {
-      var m_currentBlock;  
-      var m_blocks = [];
+  class PersistAbstractModel {
+    var m_currentItem;
+    var m_items = [];
+    
+    function setCurrentModelItem(item) {
+      m_currentItem = item;
+    }
+
+    function getCurrentModelItem() {
+      return m_currentItem;
+    }
+
+    function setItemsArray(items) {
+      m_items = items;
+    }
+
+    function getItemsArray() {
+      return m_items;
+    }
+  }
+
+  class PersistData : PersistAbstractModel {
 
     function serializeToJSON() {
       const outputStream = Stream.openFile("D:\\Shared\\Projects\\ColorPicker\\resources\\data.clr", "w");
       
-      const current = JSON.stringify(m_currentBlock);
+      const current = JSON.stringify(PersistAbstractModel.getCurrentModelItem());
       outputStream.println(current); 
       
-      const array = JSON.stringify(m_blocks);
+      const array = JSON.stringify(PersistAbstractModel.getItemsArray());
       outputStream.println(array);
       
       outputStream.close();
@@ -43,31 +62,24 @@ namespace colorPickerFeature {
       const inputStream = Stream.openFile("D:\\Shared\\Projects\\ColorPicker\\resources\\data.clr", "r");
       
       var currentRead = inputStream.readln();
-      m_currentBlock = JSON.parse(currentRead);
+      PersistAbstractModel.setCurrentModelItem(JSON.parse(currentRead));
       
       var blocksRead = inputStream.readln();
-      m_blocks = JSON.parse(blocksRead);
+      PersistAbstractModel.setItemsArray(JSON.parse(blocksRead));
       
       GeneralController.updateUi(false);
       inputStream.close();
-    }
-
-    function setCurrentModelItem(item) {
-      m_currentBlock = item;
-    }
+    }  
 
     function getBlockByID(searchID) {
-      var blockToSearch = m_blocks.find(:block: block.id == searchID);
+      var blockToSearch = PersistAbstractModel.getItemsArray().find(:block: block.id == searchID);
       return blockToSearch;
     }
 
     function getIndexByID(searchID) {
-      return m_blocks.indexOf(getBlockByID(searchID));
+      return PersistAbstractModel.getItemsArray().indexOf(getBlockByID(searchID));
     }
 
-    function setItemArray(items) {
-      m_blocks = items;
-    }
   }
 
   class GeneralController {
@@ -113,12 +125,12 @@ namespace colorPickerFeature {
     
     function deleteBlock(id) {
       var indexToDelete = persist.getIndexByID(id);
-      persist.m_blocks.splice(indexToDelete, 1);
+      persist.getItemsArray().splice(indexToDelete, 1);
       resetPreview();
-      if (persist.m_blocks.length > 0) {
-        setCurrentBlock(persist.m_blocks[persist.m_blocks.length - 1]);
+      if (persist.getItemsArray().length > 0) {
+        setCurrentBlock(persist.getItemsArray()[persist.getItemsArray().length - 1]);
       } else {
-        persist.m_currentBlock = undefined;
+        persist.setCurrentModelItem(undefined);
       }
     }
   
@@ -139,8 +151,8 @@ namespace colorPickerFeature {
       ui_paliter[ui_paliter.length - 1].style#background-color = color;
       ui_paliter[ui_paliter.length - 1].attributes["blockID"] = generatedBlock.id;
       
-      persist.m_blocks.push(generatedBlock);
-      stdout.println("Added block " + generatedBlock.id + " \nNew blockArray: " + persist.m_blocks);
+      persist.getItemsArray().push(generatedBlock);
+      stdout.println("Added block " + generatedBlock.id + " \nNew blockArray: " + persist.getItemsArray());
       setCurrentBlock(generatedBlock);
     }
     
@@ -151,7 +163,7 @@ namespace colorPickerFeature {
       }
 
       if (isDeleteOldData) {
-        persist.m_blocks = [];
+        persist.setItemsArray([]);
       }
 
       resetPreview();
@@ -159,14 +171,14 @@ namespace colorPickerFeature {
     }
 
     function addColorsToUI() {
-      for (var block in persist.m_blocks) {
+      for (var block in persist.getItemsArray()) {
         stdout.println(block);
         var blockToInsert = "<div class=\"colorBlock colorControl\" />";
         ui_paliter.append(blockToInsert);
         ui_paliter[ui_paliter.length - 1].attributes["blockID"] = block.id;
         ui_paliter[ui_paliter.length - 1].style#background-color = block.color; 
       }
-      setCurrentBlock(persist.m_currentBlock? persist.m_currentBlock : 
+      setCurrentBlock(persist.getCurrentModelItem()? persist.getCurrentModelItem() : 
                                               getBlockByDOM(ui_paliter[ui_paliter.length - 1]));
 
       return true;
@@ -174,7 +186,7 @@ namespace colorPickerFeature {
 
     function setBlockArray(colorArray) {
       removeAllBlocks();
-      persist.setItemArray(colorArray);
+      persist.setItemsArray(colorArray);
       addColorsToUI();
     }
   }
