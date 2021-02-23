@@ -22,6 +22,37 @@ namespace colorPickerFeature {
     }
   }
 
+  class ISerializator {
+    function serialize(filename, data) {}
+    function deserialize(filename) {}
+  }
+
+  class JSONSerializator : ISerializator {
+    function serialize(filename, data) {
+      const outputStream = Stream.openFile(filename, "w");
+      
+      const serializedData = JSON.stringify(data);
+      outputStream.println(current); 
+
+      outputPath.close();
+    }
+
+    function deserialize(filename) {
+      const inputStream = Stream.openFile(filename, "r");
+      
+      var dataUnparsed = inputStream.readln();
+      inputStream.close();
+
+      return JSON.parse(dataUnparsed);
+    }
+    
+  }
+
+  class DBSerializator : ISerializator {
+    function serialize(filename, data) {}
+    function deserialize(filename) {}
+  }
+
   class PersistAbstractModel {
     var m_currentItem;
     var m_items = [];
@@ -44,31 +75,25 @@ namespace colorPickerFeature {
   }
 
   class PersistData : PersistAbstractModel {
+    const serializator = new ISerializator();
+    const filePath = "D:\\Shared\\Projects\\ColorPicker\\resources\\data.clr";
 
-    function serializeToJSON() {
-      const outputStream = Stream.openFile("D:\\Shared\\Projects\\ColorPicker\\resources\\data.clr", "w");
+    function serializePersistBlocks() { 
       
-      const current = JSON.stringify(PersistAbstractModel.getCurrentModelItem());
-      outputStream.println(current); 
-      
-      const array = JSON.stringify(PersistAbstractModel.getItemsArray());
-      outputStream.println(array);
-      
-      outputStream.close();
+      JSONSerializator.serialize(filePath, PersistAbstractModel.getCurrentModelItem());
+      JSONSerializator.serialize(filePath, PersistAbstractModel.getItemsArray());
+
     }
 
-    function deserializeJSON() {
-
-      const inputStream = Stream.openFile("D:\\Shared\\Projects\\ColorPicker\\resources\\data.clr", "r");
+    function deserializePersistBlocks() {
       
-      var currentRead = inputStream.readln();
-      PersistAbstractModel.setCurrentModelItem(JSON.parse(currentRead));
+      var currentItem = JSONSerializator.deserialize(filePath);
+      PersistAbstractModel.setCurrentModelItem(currentItem);
       
-      var blocksRead = inputStream.readln();
-      PersistAbstractModel.setItemsArray(JSON.parse(blocksRead));
+      var blocksRead = JSONSerializator.deserialize(filePath);
+      PersistAbstractModel.setItemsArray(blocksRead);
       
       GeneralController.updateUi(false);
-      inputStream.close();
     }  
 
     function getBlockByID(searchID) {
